@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Analysis System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: rgba(19, 18, 20, 1);
+            color: white;
+        }
+    
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+    
+        .logo-container img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+    
+        .navbar {
+            background-color: transparent;
+            padding: 15px 20px;
+            border-bottom: 1px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-left: 250px;
+        }
+    
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            margin-right: 20px;
+        }
+    
+        .input {
+            border-style: none;
+            height: 5px;
+            width: 5px;
+            padding: 10px;
+            outline: none;
+            border-radius: 50%;
+            transition: .5s ease-in-out;
+            background-color: transparent;
+            padding-right: 40px;
+            color: white;
+        }
+    
+        .input::placeholder,
+        .input {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-size: 17px;
+        }
+    
+        .input::placeholder {
+            color: #8f8f8f;
+        }
+    
+        .icon {
+            display: block;
+            align-items: center;
+            justify-content: space-around;
+            position: absolute;
+            right: 0px;
+            cursor: pointer;
+            width: 25px;
+            height: 50px;
+            outline: none;
+            border-style: none;
+            border-radius: 50%;
+            pointer-events: painted;
+            background-color: transparent;
+            transition: .2s linear;
+        }
+    
+        .icon:focus ~ .input,
+        .input:focus {
+            box-shadow: none;
+            width: 150px;
+            border-radius: 0px;
+            background-color: transparent;
+            border-bottom: 3px solid #7e4fd4;
+            transition: all 500ms cubic-bezier(0, 0.110, 0.35, 2);
+        }
+    
+        .icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+    
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            border-right: 1px solid white;
+            margin-top: 80px;
+            float: left;
+            position: fixed;
+            height: 100%;
+            background-color: rgba(19, 18, 20, 1);
+        }
+    
+        .sidebar p {
+            margin: 10px 0;
+            color: #ccc;
+        }
+    
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    
+        .accordion-item {
+            background: none;
+            color: rgba(188, 188, 188, 1);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+    
+        .accordion-item:hover {
+            background: rgba(50, 50, 50, 1);
+        }
+    
+        .panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            background: transparent;
+            padding: 0 10px;
+        }
+    
+        .panel.active {
+            max-height: 200px;
+            padding: 10px;
+        }
+    
+        .panel ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+    
+        .panel ul li {
+            margin: 5px 0;
+            color: #ccc;
+        }
+    
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    
+        .links a {
+            background: none;
+            color: rgba(188, 188, 188, 1);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+    
+        .links a:hover {
+            background: rgba(50, 50, 50, 1);
+        }
+    
+        .button {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(44, 44, 44);
+            border-radius: 50%;
+            cursor: pointer;
+            transition-duration: .3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.13);
+            border: none;
+        }
+    
+        .bell {
+            width: 18px;
+        }
+    
+        .bell path {
+            fill: white;
+        }
+    
+        .button:hover {
+            background-color: rgb(56, 56, 56);
+        }
+    
+        .button:hover .bell {
+            animation: bellRing 0.9s both;
+        }
+    
+        @keyframes bellRing {
+            0%,
+            100% {
+                transform-origin: top;
+            }
+    
+            15% {
+                transform: rotateZ(10deg);
+            }
+    
+            30% {
+                transform: rotateZ(-10deg);
+            }
+    
+            45% {
+                transform: rotateZ(5deg);
+            }
+    
+            60% {
+                transform: rotateZ(-5deg);
+            }
+    
+            75% {
+                transform: rotateZ(2deg);
+            }
+        }
+    
+        .button:active {
+            transform: scale(0.8);
+        }
+    
+        .Btn {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition-duration: .3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+            background-color: rgb(255, 65, 65);
+            margin-top: 60px;
+        }
+    
+        .sign {
+            width: 100%;
+            transition-duration: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    
+        .sign svg {
+            width: 17px;
+        }
+    
+        .sign svg path {
+            fill: white;
+        }
+    
+        .text {
+            position: absolute;
+            right: 0%;
+            width: 0%;
+            opacity: 0;
+            color: white;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition-duration: .3s;
+        }
+    
+        .Btn:hover {
+            width: 125px;
+            border-radius: 40px;
+            transition-duration: .3s;
+        }
+    
+        .Btn:hover .sign {
+            width: 30%;
+            transition-duration: .3s;
+            padding-left: 20px;
+        }
+    
+        .Btn:hover .text {
+            opacity: 1;
+            width: 70%;
+            transition-duration: .3s;
+            padding-right: 10px;
+        }
+    
+        .Btn:active {
+            transform: translate(2px, 2px);
+        }
+    
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+    
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px; /* زيادة المسافة بين الكروت */
+            justify-content: flex-start;
+            align-items: center;
+            max-width: 800px; /* تحديد عرض الـ container */
+        }
+    
+        .card {
+            width: 150px; /* تصغير حجم الكروت */
+            height: 200px; /* تصغير ارتفاع الكروت */
+            border-radius: 20px;
+            background: #f5f5f5;
+            position: relative;
+            padding: 1.2rem;
+            border: 2px solid #c3c6ce;
+            transition: 0.5s ease-out;
+            overflow: hidden;
+        }
+    
+        .card:hover {
+            border-color: #008bf8;
+            box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.1);
+        }
+    
+        .card-details {
+            color: black;
+            height: 100%;
+            display: grid;
+            gap: 0.5em;
+            place-content: center;
+            text-align: center;
+        }
+    
+        .text-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    
+        .text-body {
+            color: rgb(134, 134, 134);
+            font-size: 0.9em;
+        }
+    
+        .card-button {
+            transform: translate(-50%, 125%);
+            width: 80%;
+            border-radius: 1rem;
+            border: none;
+            background-color: #008bf8;
+            color: #fff;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            opacity: 0;
+            transition: 0.3s ease-out;
+        }
+    
+        .card:hover .card-button {
+            opacity: 1;
+            transform: translate(-50%, 0%);
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="images\Component 9 (1).png" alt="Logo">
+    </div>
+
+    <div class="navbar">
+        <div class="input-wrapper">
+            <button class="icon"> 
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="25px" width="25px">
+                    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="#fff" d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"></path>
+                    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" stroke="#fff" d="M22 22L20 20"></path>
+                </svg>
+            </button>
+            <input placeholder="Search diseases..." class="input" name="text" type="text" id="searchInput">
+        </div>
+        <div class="icons">
+            <button class="button">
+                <svg viewBox="0 0 448 512" class="bell">
+                    <path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <br> <br>
+        <p>The diseases that can be detected:</p>
+        <div class="accordion">
+            <button class="accordion-item">Cancers</button>
+            <div class="panel">
+                <ul>
+                    <li>Breast Cancer</li>
+                    <li>Lung Cancer</li>
+                </ul>
+            </div>
+            <button class="accordion-item">Diabetes</button>
+            <div class="panel">
+                <ul>
+                    <li>Type 1 Diabetes</li>
+                    <li>Type 2 Diabetes</li>
+                </ul>
+            </div>
+            <button class="accordion-item">Lung Diseases</button>
+            <div class="panel">
+                <ul>
+                    <li>Asthma</li>
+                    <li>Bronchitis</li>
+                </ul>
+            </div>
+        </div>
+        <div class="links">
+            <a href="main.html">Home Page</a>
+            <a href="aboutus.html">About us</a>
+        </div>
+        <button class="Btn" id="logoutBtn">
+            <div class="sign">
+                <svg viewBox="0 0 512 512">
+                    <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
+                </svg>
+            </div>
+            <div class="text">Logout</div>
+        </button>
+    </div>
+
+    <div class="main-content">
+        <div class="cards-container">
+            <div class="card">
+                <div class="card-details">
+                    <p class="text-title"></p>
+                    <p class="text-body"></p>
+                </div>
+                <button class="card-button"></button>
+            </div>
+            <div class="card">
+                <div class="card-details">
+                    <p class="text-title"></p>
+                    <p class="text-body"></p>
+                </div>
+                <button class="card-button"></button>
+            </div>
+            <div class="card">
+                <div class="card-details">
+                    <p class="text-title"></p>
+                    <p class="text-body"></p>
+                </div>
+                <button class="card-button"></button>
+            </div>
+            <div class="card">
+                <div class="card-details">
+                    <p class="text-title"></p>
+                    <p class="text-body"></p>
+                </div>
+                <button class="card-button"></button>
+            </div>
+            <div class="card">
+                <div class="card-details">
+                    <p class="text-title"></p>
+                    <p class="text-body"></p>
+                </div>
+                <button class="card-button"></button>
+            </div>
+            <div class="card">
+                <div class="card-details">
+                    <p class="text-title"></p>
+                    <p class="text-body"></p>
+                </div>
+                <button class="card-button"></button>
+            </div>
+            <div class="card">
+                <div class="card-details">
+                    <p class="text-title"></p>
+                    <p class="text-body"></p>
+                </div>
+                <button class="card-button"></button>
+            </div>
+            <div class="card">
+                <div class="card-details">
+                    <p class="text-title"></p>
+                    <p class="text-body"></p>
+                </div>
+                <button class="card-button"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Accordion Functionality
+        const accordionItems = document.querySelectorAll('.accordion-item');
+
+        accordionItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Toggle the active class on the panel
+                const panel = this.nextElementSibling;
+                panel.classList.toggle('active');
+
+                // Close other panels
+                accordionItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.nextElementSibling.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Logout Button Functionality
+        const logoutBtn = document.getElementById('logoutBtn');
+        logoutBtn.addEventListener('click', function() {
+            alert('Logging out...');
+            // Add your logout logic here
+        });
+    </script>
+</body>
+</html>

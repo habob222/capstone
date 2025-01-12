@@ -196,43 +196,42 @@ input:checked + .slider:before {
             border-radius: 10px;
         }
 
-        /* Modal Styles */
         .modal {
-            display: none; /* Initially hidden */
-            position: fixed; /* Fixed position for full-screen overlay */
+            display: none; 
+            position: fixed; 
             top: 0;
             left: 0;
-            width: 100%; /* Full-screen width */
-            height: 100%; /* Full-screen height */
-            z-index: 1000; /* Ensure it stays above other content */
-            background:rgba(217, 217, 217, 0.1); /* Dark transparent background for overlay */
+            width: 100%; 
+            height: 100%; 
+            z-index: 1000; 
+            background:rgba(217, 217, 217, 0.1); 
             opacity: 0;
-            transition: opacity 0.3s ease-in-out; /* Smooth fade-in effect */
+            transition: opacity 0.3s ease-in-out; 
         }
         
         .modal.active {
-            display: block; /* Display modal when active */
-            opacity: 1; /* Fade in effect */
+            display: block; 
+            opacity: 1; 
         }
         
         .modal-content {
-            position: absolute; /* Center the modal content */
+            position: absolute; 
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.7); /* Start scaled down */
-            transition: transform 0.3s ease-in-out; /* Smooth scaling animation */
+            transform: translate(-50%, -50%) scale(0.7); 
+            transition: transform 0.3s ease-in-out; 
             width: 400px;
             padding: 20px;
             
-            background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
-            backdrop-filter: blur(18px); /* Blur effect */
-            -webkit-backdrop-filter: blur(18px); /* Safari support */
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(18px); 
+            -webkit-backdrop-filter: blur(18px); 
 
             
         }
         
         .modal.active .modal-content {
-            transform: translate(-50%, -50%) scale(1); /* Scale back to normal when active */
+            transform: translate(-50%, -50%) scale(1); 
         }
         
         .close-modal {
@@ -249,7 +248,6 @@ input:checked + .slider:before {
             color: rgb(144, 54, 65);
         }
 
-        /* Form Styles */
         .txt_field {
             position: relative;
             margin: 20px 0;
@@ -369,7 +367,6 @@ input:checked + .slider:before {
         </div>
     </div>
 
-    <!-- Login Modal -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -394,7 +391,6 @@ input:checked + .slider:before {
         </div>
     </div>
 
-    <!-- Signup Modal -->
     <div class="modal" id="signupModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -428,18 +424,15 @@ input:checked + .slider:before {
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get modal elements
             const loginModal = document.getElementById('loginModal');
             const signupModal = document.getElementById('signupModal');
             
-            // Get buttons
             const loginBtns = [document.getElementById('loginBtn'), document.getElementById('loginBtnMain')];
             const signupBtns = [document.getElementById('signupBtn'), document.getElementById('signupBtnMain')];
             const closeBtns = document.querySelectorAll('.close-modal');
             const switchToSignup = document.querySelector('.switch-to-signup');
             const switchToLogin = document.querySelector('.switch-to-login');
 
-            // Functions to handle modals
             function openModal(modal) {
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -450,7 +443,6 @@ input:checked + .slider:before {
                 document.body.style.overflow = '';
             }
 
-            // Event listeners for buttons
             loginBtns.forEach(btn => {
                 btn.addEventListener('click', () => openModal(loginModal));
             });
@@ -466,7 +458,6 @@ input:checked + .slider:before {
                 });
             });
 
-            // Switch between modals
             switchToSignup.addEventListener('click', (e) => {
                 e.preventDefault();
                 closeModal(loginModal);
@@ -479,13 +470,11 @@ input:checked + .slider:before {
                 setTimeout(() => openModal(loginModal), 300);
             });
 
-            // Close modal when clicking outside
             window.addEventListener('click', (e) => {
                 if (e.target === loginModal) closeModal(loginModal);
                 if (e.target === signupModal) closeModal(signupModal);
             });
 
-            // Handle form submissions
             document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 window.location.href = 'wait.html';
@@ -508,15 +497,14 @@ input:checked + .slider:before {
         
             darkModeToggle.addEventListener('change', function() {
                 if (this.checked) {
-                    // Dark mode
                     body.style.backgroundImage = 'radial-gradient(at center, #F6D6D6, #0162F2 34%, #9694FF 36%, rgba(12, 23, 27, 1) 40%)';
-                    logo.src ='.\images\Component 9 (1).png'; // Replace with your dark mode logo path
+                    logo.src ='.\images\Component 9 (1).png'; 
                     navLinks.forEach(link => {
                         link.style.color = 'white';
                     });
                     textH3.style.color = 'white';
                 } else {
-                    // Light mode
+                    
                     body.style.backgroundImage = 'radial-gradient(at center, #F6D6D6, #0162F2 34%, #9694FF 36%, white 40%)';
                     logo.src = 'images\Component 9.png';
                     navLinks.forEach(link => {

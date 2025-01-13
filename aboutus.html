@@ -99,7 +99,7 @@
             width: 150px;
             border-radius: 0px;
             background-color: transparent;
-            border-bottom: 3px solid #7e4fd4;
+            border-bottom: 3px solid #4682b4;
             transition: all 500ms cubic-bezier(0, 0.110, 0.35, 2);
         }
     
@@ -177,7 +177,18 @@
             margin-top: 20px;
         }
     
-        .links a {
+        .team {
+            background-color: rgba(50, 50, 50, 1);
+            color: rgba(188, 188, 188, 1);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+        .home  {
             background: none;
             color: rgba(188, 188, 188, 1);
             border: none;
@@ -189,7 +200,7 @@
             text-decoration: none;
         }
     
-        .links a:hover {
+        .home:hover {
             background: rgba(50, 50, 50, 1);
         }
     
@@ -332,17 +343,16 @@
         }
     
         .cards-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px; /* زيادة المسافة بين الكروت */
-            justify-content: flex-start;
-            align-items: center;
-            max-width: 800px; /* تحديد عرض الـ container */
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 كروت في الصف */
+            grid-template-rows: repeat(2, 1fr); /* صفين */
+            gap: 40px; /* المسافة بين الكروت */
+            max-width: 800px;
         }
     
         .card {
-            width: 150px; /* تصغير حجم الكروت */
-            height: 200px; /* تصغير ارتفاع الكروت */
+            width: 150px;
+            height: 220px;
             border-radius: 20px;
             background: #f5f5f5;
             position: relative;
@@ -353,7 +363,7 @@
         }
     
         .card:hover {
-            border-color: #008bf8;
+            border-color: #4682b4;
             box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.1);
         }
     
@@ -364,6 +374,8 @@
             gap: 0.5em;
             place-content: center;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
     
         .text-title {
@@ -381,7 +393,7 @@
             width: 80%;
             border-radius: 1rem;
             border: none;
-            background-color: #008bf8;
+            background-color: #4682b4;
             color: #fff;
             font-size: 0.9rem;
             padding: 0.5rem 1rem;
@@ -390,12 +402,83 @@
             bottom: 0;
             opacity: 0;
             transition: 0.3s ease-out;
+            z-index: 2;
         }
     
         .card:hover .card-button {
             opacity: 1;
             transform: translate(-50%, 0%);
         }
+    
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* From Uiverse.io by satyamchaudharydev */ 
+/* The switch - the box around the slider */
+.switch {
+    display: block;
+    --width-of-switch: 3.5em;
+    --height-of-switch: 2em;
+    /* size of sliding icon -- sun and moon */
+    --size-of-icon: 1.4em;
+    /* it is like a inline-padding of switch */
+    --slider-offset: 0.3em;
+    position: relative;
+    width: var(--width-of-switch);
+    height: var(--height-of-switch);
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f4f4f5;
+    transition: .4s;
+    border-radius: 30px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: var(--size-of-icon,1.4em);
+    width: var(--size-of-icon,1.4em);
+    border-radius: 20px;
+    left: var(--slider-offset,0.3em);
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(40deg,#ff0080,#ff8c00 70%);
+    ;
+   transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #303136;
+  }
+  
+  input:checked + .slider:before {
+    left: calc(100% - (var(--size-of-icon,1.4em) + var(--slider-offset,0.3em)));
+    background: #303136;
+    /* change the value of second inset in box-shadow to change the angle and direction of the moon  */
+    box-shadow: inset -3px -2px 5px -2px #8983f7, inset -10px -4px 0 0 #a3dafb;
+  }
     </style>
 </head>
 <body>
@@ -413,6 +496,7 @@
             </button>
             <input placeholder="Search diseases..." class="input" name="text" type="text" id="searchInput">
         </div>
+
         <div class="icons">
             <button class="button">
                 <svg viewBox="0 0 448 512" class="bell">
@@ -420,6 +504,7 @@
                 </svg>
             </button>
         </div>
+    
     </div>
 
     <div class="sidebar">
@@ -449,8 +534,8 @@
             </div>
         </div>
         <div class="links">
-            <a href="main.html">Home Page</a>
-            <a href="aboutus.html">About us</a>
+            <a href="main.html" class="home">Home Page</a>
+            <a href="aboutus.html" class="team">About us</a>
         </div>
         <button class="Btn" id="logoutBtn">
             <div class="sign">
@@ -465,60 +550,44 @@
     <div class="main-content">
         <div class="cards-container">
             <div class="card">
-                <div class="card-details">
-                    <p class="text-title"></p>
-                    <p class="text-body"></p>
-                </div>
-                <button class="card-button"></button>
+                <img src="images\aya.jpg" class="card-image">
+                <div class="card-details"></div>
+                <button class="card-button">Aya Ahmed</button>
             </div>
             <div class="card">
-                <div class="card-details">
-                    <p class="text-title"></p>
-                    <p class="text-body"></p>
-                </div>
-                <button class="card-button"></button>
+                <img src="images\matar.jpg" class="card-image">
+                <div class="card-details"></div>
+                <button class="card-button">Mayar Mohammed</button>
             </div>
             <div class="card">
-                <div class="card-details">
-                    <p class="text-title"></p>
-                    <p class="text-body"></p>
-                </div>
-                <button class="card-button"></button>
+                <img src="images\merona.jpg" class="card-image">
+                <div class="card-details"></div>
+                <button class="card-button">Merona Emad</button>
             </div>
             <div class="card">
-                <div class="card-details">
-                    <p class="text-title"></p>
-                    <p class="text-body"></p>
-                </div>
-                <button class="card-button"></button>
+                <img src="images\ahmed.jpg" class="card-image">
+                <div class="card-details"></div>
+                <button class="card-button">Ahmed Hossam</button>
             </div>
             <div class="card">
-                <div class="card-details">
-                    <p class="text-title"></p>
-                    <p class="text-body"></p>
-                </div>
-                <button class="card-button"></button>
+                <img src="images\menna.jpg" class="card-image">
+                <div class="card-details"></div>
+                <button class="card-button">Mennatullah Ahmed</button>
             </div>
             <div class="card">
-                <div class="card-details">
-                    <p class="text-title"></p>
-                    <p class="text-body"></p>
-                </div>
-                <button class="card-button"></button>
+                <img src="images\esr.jpg" class="card-image">
+                <div class="card-details"></div>
+                <button class="card-button">Israa Ragab</button>
             </div>
             <div class="card">
-                <div class="card-details">
-                    <p class="text-title"></p>
-                    <p class="text-body"></p>
-                </div>
-                <button class="card-button"></button>
+                <img src="images\hab.jpg" class="card-image">
+                <div class="card-details"></div>
+                <button class="card-button">Habiba Ahmed</button>
             </div>
             <div class="card">
-                <div class="card-details">
-                    <p class="text-title"></p>
-                    <p class="text-body"></p>
-                </div>
-                <button class="card-button"></button>
+                <img src="images\ashr.png" class="card-image">
+                <div class="card-details"></div>
+                <button class="card-button">Ashraf Mohammed</button>
             </div>
         </div>
     </div>

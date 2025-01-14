@@ -372,7 +372,7 @@
 </head>
 <body>
     <div class="logo-container">
-        <img src="images\Component 9 (1).png" alt="Logo">
+        <img src="C:\Users\hp\Desktop\New folder (8)\images\Component 9 (1).png" alt="Logo">
     </div>
 
     <div class="navbar">
@@ -472,26 +472,154 @@
             });
         });
 
-        // Function to fetch data from Flask backend
+        // Chart instance holder for proper cleanup
+let currentChart = null;
+
+// Configuration for gas display names and colors
+const GAS_CONFIG = {
+    co: { label: 'Carbon Monoxide', color: '#ff6347' },
+    methane: { label: 'Methane', color: '#4682b4' },
+    ethanol: { label: 'Ethanol', color: '#32cd32' },
+    acetone: { label: 'Acetone', color: '#ffa500' },
+    benzene: { label: 'Benzene', color: '#8a2be2' },
+    methyl_mercaptan: { label: 'Methyl Mercaptan', color: '#ff69b4' }
+};
+
+// Function to validate gas readings
+function validateGasReadings(readings) {
+    const isValid = readings && 
+        typeof readings === 'object' &&
+        ['mq2', 'mq3', 'mq135'].every(sensor => 
+            readings[sensor] && typeof readings[sensor] === 'object');
+    
+    if (!isValid) {
+        throw new Error('Invalid gas readings format');
+    }
+    return true;
+}
+
+// Function to update the status message
+function updateStatusMessage(message, isError = false) {
+    const statusElement = document.getElementById('status-message');
+    statusElement.innerText = message;
+    statusElement.style.color = isError ? '#ff6347' : 'white';
+}
+
+// Function to update the advice message
+function updateAdviceMessage(message, isError = false) {
+    const adviceElement = document.getElementById('advice-message');
+    adviceElement.innerText = message;
+    adviceElement.style.color = isError ? '#ff6347' : 'white';
+}
+
+// Function to create/update the gas chart
+function updateGasChart(gasData) {
+    const ctx = document.getElementById('gasChart').getContext('2d');
+    
+    // Destroy existing chart if it exists
+    if (currentChart) {
+        currentChart.destroy();
+    }
+
+    const labels = Object.keys(gasData).map(key => GAS_CONFIG[key]?.label || key);
+    const colors = Object.keys(gasData).map(key => GAS_CONFIG[key]?.color || '#gray');
+
+    currentChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Gas Levels (ppm)',
+                data: Object.values(gasData),
+                backgroundColor: colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Gas Concentration (ppm)',
+                        color: 'white',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        color: 'white',
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Gas Type',
+                        color: 'white',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        color: 'white',
+                        font: {
+                            size: 12
+                        },
+                        maxRotation: 45,
+                        minRotation: 45
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.raw} ppm`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+/// Function to fetch data from Flask backend
 async function fetchData() {
     try {
-        const response = await fetch('http://192.168.249.173:5000/upload', {
+        const response = await fetch('http://127.0.0.1:5000/upload', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 mq2: {
-                    co: 120,
-                    methane: 300
+                    co: 30,  // Normal CO level
+                    methane: 80  // Normal Methane level
                 },
                 mq3: {
-                    ethanol: 50,
-                    acetone: 20
+                    ethanol: 15,  // Normal Ethanol level
+                    acetone: 8  // Normal Acetone level
                 },
                 mq135: {
-                    benzene: 10,
-                    methyl_mercaptan: 5
+                    benzene: 3,  // Normal Benzene level
+                    methyl_mercaptan: 1  // Normal Methyl Mercaptan level
                 }
             }),
         });
@@ -600,12 +728,6 @@ async function fetchData() {
 
 // Call the function to fetch data when the page loads
 fetchData();
-
-// Logout functionality
-document.getElementById('logoutBtn').addEventListener('click', () => {
-    alert("Logged out successfully!");
-    window.location.href = '/';
-});
     </script>
 </body>
-</html>
+</html>         
